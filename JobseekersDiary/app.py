@@ -15,7 +15,7 @@ def dashboard():
 
 @app.route('/api/rest/activities', methods=['GET'])
 def get_all_job_activities():
-    resp = MongoConnection.retrive_job_activities("Nik Medgyesy")
+    resp = ActivitiesDAL.retrive_job_activities("Nik Medgyesy")
     return json.jsonify(resp)
 
 
@@ -26,8 +26,8 @@ def create_job_activity():
     date = request.form['date']
     description = request.form['description']
 
-    success = MongoConnection.add_activity(
-        "Nik Medgyesy", company, position, date, description)
+    success = ActivitiesDAL.add_activity(
+        "5ab55684a313fc8a5226da9f", company, position, date, description)
     if success:
         return json.dumps({'status': 'OK'})
     else:
@@ -36,7 +36,7 @@ def create_job_activity():
 
 @app.route('/api/rest/activities/<activity_id>', methods=['GET'])
 def get_job_activity(activity_id):
-    resp = MongoConnection.retrive_job_activity(activity_id)
+    resp = ActivitiesDAL.retreive_job_activity(activity_id)
     return json.jsonify(resp)
 
 

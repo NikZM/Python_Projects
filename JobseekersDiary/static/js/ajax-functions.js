@@ -1,15 +1,26 @@
 $(document).ready(function () {
 
-    $.ajax({
-        url: '/api/rest/activities',
-        type: 'GET',
-        success: function (data) {
+    var activitiesList = getActivitiesList();
+    drawActivitiesTable(activitiesList);
+
+    function drawActivitiesTable(activitiesList) {
+        $.each(data, function (key, val) {
             console.log(data);
-        },
-        error: function (error) {
-            console.log(error);
-        }
-    });
+        });
+    }
+
+    function getActivitiesList() {
+        $.ajax({
+            url: '/api/rest/activities',
+            type: 'GET',
+            success: function (data) {
+                return data;
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
 
     $('button').click(function () {
         var company = $('#company_name').val();

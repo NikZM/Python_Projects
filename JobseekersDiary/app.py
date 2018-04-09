@@ -1,5 +1,10 @@
+import sys
+sys.path.append('/rest/')
 from flask import Flask, render_template, request, json, redirect
-import MongoConnection
+from rest import MongoConnection
+from bson import json_util
+
+from rest import ActivitiesDAL, UsersDAL
 app = Flask(__name__)
 
 
@@ -15,19 +20,22 @@ def dashboard():
 
 @app.route('/api/rest/activities', methods=['GET'])
 def get_all_job_activities():
-    resp = ActivitiesDAL.retrive_job_activities("Nik Medgyesy")
+    user_id = "5acb611ca313fc8a809fea7a"
+    resp = ActivitiesDAL.retrieve_job_activities(user_id)
     return json.jsonify(resp)
 
 
 @app.route('/api/rest/activities', methods=['POST'])
 def create_job_activity():
+    user_id = request.form['user_id']
     company = request.form['company']
     position = request.form['position']
     date = request.form['date']
     description = request.form['description']
 
     success = ActivitiesDAL.add_activity(
-        "5ab55684a313fc8a5226da9f", company, position, date, description)
+        user_id, company, position, date, description)
+        
     if success:
         return json.dumps({'status': 'OK'})
     else:
@@ -36,7 +44,7 @@ def create_job_activity():
 
 @app.route('/api/rest/activities/<activity_id>', methods=['GET'])
 def get_job_activity(activity_id):
-    resp = ActivitiesDAL.retreive_job_activity(activity_id)
+    resp = ActivitiesDAL.retrieve_job_activity(activity_id)
     return json.jsonify(resp)
 
 
@@ -48,6 +56,15 @@ def update_job_activity(activity_id):
 @app.route('/api/rest/activities/<activity_id>', methods=['DELETE'])
 def delete_job_activity(activity_id):
     return 0
+
+
+@app.route('/api/rest/users', methods=['POST'])
+def add_new_user():
+    email = request.form['email']
+    password = request.form['password']
+    resp = UsersDAL.add_new_user(email, password)
+    return json.jsonify(resp)
+
 
 
 if __name__ == '__main__':

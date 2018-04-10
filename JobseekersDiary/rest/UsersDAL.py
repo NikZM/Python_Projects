@@ -24,7 +24,7 @@ def add_new_user(email, password):
         {"email": email.lower(),
          "password": salted_password,
          "jobs": []}).inserted_id
-    return inserted_id
+    return str(inserted_id)
 
 # ----------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ def get_users_activity_ids(user_id):
 
 
 def __salt_password(password):
-    salted_pass = bcrypt.hashpw(password, dbconfig.get_salt())
-    return salted_pass
+    salted_pass = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt(10))
+    return str(salted_pass)
 
 # ----------------------------------------------------------------------

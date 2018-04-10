@@ -2,15 +2,20 @@ import MongoConnection
 from flask_hashing import Hashing
 from flask import Flask
 from bson.objectid import ObjectId
+import dbconfig
 
 app = Flask(__name__)
 hashing = Hashing(app)
+
+# ----------------------------------------------------------------------
 
 
 def make_email_unique():
     """Only needed to run once after collection has been created"""
     # TODO Remove method and write directly to MongoDB console
     MongoConnection.get_users_client().create_index("email", unique=True)
+
+# ----------------------------------------------------------------------
 
 
 def add_new_user(email, password):
@@ -22,6 +27,8 @@ def add_new_user(email, password):
          "jobs": []}).inserted_id
     return inserted_id
 
+# ----------------------------------------------------------------------
+
 
 def add_activity_to_user(user_id, activity_id):
     users = MongoConnection.get_users_client()
@@ -29,6 +36,22 @@ def add_activity_to_user(user_id, activity_id):
         {"_id": ObjectId(user_id)},
         {"$addToSet": {"jobs": activity_id}})
     return result
+
+# ----------------------------------------------------------------------
+
+
+def remove_activity_from_user(user_id, job_id):
+    users = MongoConnection.get_users_client()
+    deleted_count = users.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$pull": {
+            "jobs": job_id
+        }
+        }
+    ).modified_count
+    return True if deleted_count > 0 else False
+
+# ----------------------------------------------------------------------
 
 
 def get_users_activity_ids(user_id):
@@ -42,7 +65,11 @@ def get_users_activity_ids(user_id):
 
     return job_ids
 
+# ----------------------------------------------------------------------
+
 
 def __salt_password(password):
-    salted_pass = hashing.hash_value(password, 'NikZM')
+    salted_pass = hashing.hash_value(password, dbconfig.get_salt())
     return salted_pass
+
+# ----------------------------------------------------------------------

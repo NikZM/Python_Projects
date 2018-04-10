@@ -1,7 +1,8 @@
-import MongoConnection
+from . import MongoConnection
 import bcrypt
 from bson.objectid import ObjectId
-import dbconfig
+from . import dbconfig
+
 
 
 

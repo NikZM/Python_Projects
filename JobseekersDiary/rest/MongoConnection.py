@@ -1,6 +1,5 @@
 from pymongo import MongoClient
-
-import dbconfig
+from . import dbconfig
 
 
 def get_activities_client():

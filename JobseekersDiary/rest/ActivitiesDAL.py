@@ -2,8 +2,8 @@ from bson.json_util import dumps
 from bson.objectid import ObjectId
 from pymongo.collection import ReturnDocument
 import datetime
-import UsersDAL
-import MongoConnection
+from . import UsersDAL
+from . import MongoConnection
 import json
 
 # ----------------------------------------------------------------------
@@ -104,7 +104,7 @@ def delete_job(user_id, job_id):
 def delete_job_activity(object_id, date, description):
     activities = MongoConnection.get_activities_client()
     d = datetime.date(*(int(s) for s in date.split('-')))
-    result = activities.update_one(
+    matched_count = activities.update_one(
         {"_id": ObjectId(object_id)},
         {"$pull": {
             "activity": {

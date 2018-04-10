@@ -1,10 +1,6 @@
-import sys
-sys.path.append('/rest/')
 from flask import Flask, render_template, request, json, redirect
-from rest import MongoConnection
 from bson import json_util
-
-from rest import ActivitiesDAL, UsersDAL
+from rest import ActivitiesDAL, UsersDAL, MongoConnection
 app = Flask(__name__)
 
 user_id = "5acb611ca313fc8a809fea7a"  # My userid
@@ -71,9 +67,9 @@ def update_job_activity(activity_id):
     updated_count = ActivitiesDAL.update_job_activity(
         activity_id, company, position)
     if updated_count > 0:
-        return json.dumps({"success":True}), 200, {'ContentType': 'application/json'}
+        return json.dumps({"success": True}), 200, {'ContentType': 'application/json'}
     else:
-        return json.dumps({"success":False}), 400, {'ContentType': 'application/json'}
+        return json.dumps({"success": False}), 400, {'ContentType': 'application/json'}
 
 # ----------------------------------------------------------------------
 
@@ -103,7 +99,6 @@ def add_new_user():
 @app.route('/api/rest/all', methods=['GET'])
 def get_all():
     """Temporary method for debug and testing"""
-    from bson.json_util import dumps
     activities_client = MongoConnection.get_activities_client()
     users_client = MongoConnection.get_users_client()
 
@@ -121,15 +116,7 @@ def get_all():
         user["_id"] = str(user["_id"])
         users_arr.append(user)
 
-    job_obj = (
-        json.loads(
-            dumps(activity_arr)
-        ),
-        json.loads(dumps(users_arr))
-    )
-
-    return json.dumps({'activity': activity_arr, 'users': users_arr}),
-    200, {'ContentType': 'application/json'}
+    return json.dumps({'activity': activity_arr, 'users': users_arr}), 200, {'ContentType': 'application/json'}
 
 # ----------------------------------------------------------------------
 

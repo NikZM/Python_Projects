@@ -1,11 +1,9 @@
 import MongoConnection
-from flask_hashing import Hashing
-from flask import Flask
+import bcrypt
 from bson.objectid import ObjectId
 import dbconfig
 
-app = Flask(__name__)
-hashing = Hashing(app)
+
 
 # ----------------------------------------------------------------------
 
@@ -69,7 +67,7 @@ def get_users_activity_ids(user_id):
 
 
 def __salt_password(password):
-    salted_pass = hashing.hash_value(password, dbconfig.get_salt())
+    salted_pass = bcrypt.hashpw(password, dbconfig.get_salt())
     return salted_pass
 
 # ----------------------------------------------------------------------
